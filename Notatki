@@ -1,0 +1,45 @@
+/*
+Projekt B: Wykorzystać pliki Miasta5.txt i Miasta.cpp i zaimplementować algorytm Dijkstry wyszukiwania najkrótszej drogi w grafie.
+W programie powinniśmy móc jakoś wyspecyfikować, o które dwa miasta nam chodzi, a w rezultacie powinniśmy otrzymać odległość między nimi i listę miast, przez które będzie się jechało.
+
+czyli tutaj można wpisać z klawiatury o jakie chcemy miasto początkowe i końcowe
+zaimplementować algorytm Djikstry
+i zwrócić ów listę
+
+Tak zrobiony projekt zasługuje na 24 pkt.
+Jeżeli ktoś dodatkowo zrobi elegancko i zaimplementuje kolejkę priorytetową do przechowywania odległości nieosiągniętych punktów do źródła - dodatkowe 5 pkt.
+Jeżeli ktoś dostarczy wizualizację wyliczonej drogi - kolejne 5 pkt.
+*/
+
+//czyli tak:
+//mamy graf skierowany z X ilością wierzchołków
+//mamy y ilości krawędzi, każda ze swoją wagą //?
+//wybór startowego wierzcholka
+//ustawiamy wartosc niezliczonych grafów na NULL
+//potrzebujemy tablicy przechowującej wierzchołki i krawędzie
+//tablicy do przechowującej najmniejsze koszty dotarcia do wierzchołka
+//tablicy przechowującej ścieżkę
+//warunki:
+//czy doszliśmy do jakiegoś wierzchołka
+//czy mamy wogóle dojście do wierzchołka
+
+//1
+//okreslamy skąd dokąd chcemy dojsć
+
+//2
+//wierzcholek 0 sprawdza wierzcholi do jakich  moze przejsc
+
+//3
+//sprawdza dlugosc trasy przypisując ją do tych wierzcholkow
+
+//4
+//przechodzimy do następnego wierzchołka o najkrótrszej trasie
+
+//4
+//wierzcholek 1 sprawdza wierzcholi do jakich moze przejsc
+
+//5
+//jesli trasa przez inny wierzcholek jest mniejsza, to przypisujemy mniejszą trasę
+//(sprawdzamy na podstawie porównania przypisanej liczby oraz trasy z aktualnego wierzcholka)
+//przypisujemy do każdego miasta długość najkrótszej trasy jaką znaleźliśmy do tej pory
+//na starcie kazde miasto (oprocz poczatkowego,ktore ma 0) ma miec wartosc nieskonczonosc
