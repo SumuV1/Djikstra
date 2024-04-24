@@ -28,6 +28,8 @@ struct miasto {
     string nazwa;
     edge* sasiedzi;
     bool odwiedzony;
+    //int odwiedzony;
+    double dystans;
 
     miasto(string _nazwa, double _x, double _y,bool _odwiedzony)
     {
@@ -36,6 +38,7 @@ struct miasto {
         nazwa = _nazwa;
         sasiedzi = nullptr;
         odwiedzony=_odwiedzony;
+        dystans=1000000;
     }
 };
 
@@ -152,6 +155,114 @@ void Podaj_S_i_F(string start,string finish)
 
 //przemieszczenie musi byc zmiana lokalizacji walkera na nastepny wezel oraz zapisanie drogi
 
+void Djikstra_v2(int start,int finish,int droga[])
+{
+    //1.nieodwiedzone węzły mają wartosc "bool odwiedzone=false"
+    //odwiedzone będą miały wartość true oraz zapisywać ID węzła przed iteracją z przejściem do następnego węzła
+
+    //2.Kazdy wezel ma dystans rowny 1000000, z racji ze nie wiem jak ustawic nieskonczonosc, ale mysle ze tyle styknie ;)
+
+    int d=0;
+    droga[d]=start;
+    miasto* walker=M[start];
+    walker->dystans=0;
+    miasto* cel=M[finish];
+
+    while(walker->nazwa!=cel->nazwa)
+    {
+        double najm_len_sasaiada=1000000;
+        int id_najm_len_sasiada=0;
+        cout<<"\nMiasto przed iteracja: "<<walker->nazwa;
+        while(walker->sasiedzi)
+        {
+            //3.Dla walkera policz dystans do kazdego sasiada przypisujac mu ten dystans, jeśli jest mniejszy niz ten milion
+            //dystans wezla na ktorym jest walker + dystans juz policzony
+            if(walker->sasiedzi->len<M[walker->sasiedzi->to]->dystans)
+            {
+                //3.1 Aktualizacja drogi jesli jest mniejsza niz domyslna
+                if(M[walker->sasiedzi->to]->dystans < 1000000)
+                {
+                    M[walker->sasiedzi->to]->dystans += walker->sasiedzi->len;
+                }
+                else if(M[walker->sasiedzi->to]->dystans == 1000000)
+                {
+                    M[walker->sasiedzi->to]->dystans = walker->dystans + walker->sasiedzi->len;
+                }
+                //jaki jest najm dystans zsumowany do miast sąsiadujących przez aktualne miasto <---
+                //jakie jest ID tego miasta
+
+                najm_len_sasaiada=M[walker->sasiedzi->to]->dystans;
+                if(M[walker->sasiedzi->to]->dystans==najm_len_sasaiada)
+                {
+                    id_najm_len_sasiada=walker->sasiedzi->to;
+                }
+                //spr jakie jest id miasta do ktorego prowadzi najm dlugosc
+
+                //przypisz najm krawedz i spr ktora to krawedz, bo potem moze byc inna niz ostatnia sprawdzana w pkt5 PO IDku
+            }
+            if (walker->sasiedzi->next != nullptr)
+            {
+                walker->sasiedzi=walker->sasiedzi->next;
+            }else{
+                break;
+            }
+        }
+
+        //4. Oznaczenie węzła jako odwiedzonego
+        walker->odwiedzony=true;
+
+        //5. Wybór nast. węzła z nieodwiedzonych, mającego najm dystans
+        if(M[id_najm_len_sasiada]->odwiedzony==false && M[id_najm_len_sasiada]->dystans==najm_len_sasaiada)
+        {
+            droga[++d]=walker->sasiedzi->to;
+            walker=M[walker->sasiedzi->to];
+            cout<<"\nMiasto po iteracji: "<<walker->nazwa<<endl;
+        }
+    }
+
+    if(walker==cel)
+    {
+        cout<<"\nDotarlem do miasta "<<walker->nazwa<<endl;
+    }else{
+        cout<<"\nGdzieś mnie wywiało...";
+    }
+}
+
+int main()
+{
+    string start;
+    string finish;
+    int droga[2284];
+
+    //int num = 2037;//Warszawa
+    //int num = 1294;//Opoczno
+    int num = 2258;//Zarnow
+    WypelnianieMiast();
+    cout << M[num]->nazwa << "      " << M[num]->x << "      " << M[num]->y << endl;
+    WypelnianieKrawedzi();
+    cout << "Sasiedzi:" << endl;
+    edge* temp = M[num]->sasiedzi;
+    while (temp)
+    {
+        cout << M[temp->to]->nazwa << ", ";  temp = temp->next;
+    }
+    cout << "\n";
+    Podaj_S_i_F(start,finish);
+    //Djikstra(start_id,finish_id,droga);
+    Djikstra_v2(start_id,finish_id,droga);
+    //cout<<droga[0];
+}
+
+
+
+
+
+
+
+
+//______________________________________________________________________//
+/*
+
 void Djikstra(int start,int finish,int droga[])
 {
     int d=0;
@@ -160,18 +271,16 @@ void Djikstra(int start,int finish,int droga[])
     miasto* cel=M[finish];
     while(walker!=cel)
     {
-        double najm=10000;
         int id_next_miasta;
-
         //muszę sprawdzić na jednej krawędzi dlugosc i id miasta do ktorego porwadzi krawedz
         //potem przejść do następnej krawędzi i znów sprawdzic
 
         //while(walker->sasiedzi=walker->sasiedzi->next)
         while(walker->sasiedzi)
         {
-            if(walker->sasiedzi->len<najm)
+            if(walker->sasiedzi->len<walker->dystans)//dystans do zmiany
             {
-                najm=walker->sasiedzi->len;
+                walker->dystans=walker->sasiedzi->len;//dystans do zmiany
                 id_next_miasta=walker->sasiedzi->to;
                 //jakie id (to) ma krawedz o najm len
             }
@@ -183,7 +292,7 @@ void Djikstra(int start,int finish,int droga[])
                 break;
             }
         }
-        cout<<"Najblizsze miasto dla "<<walker->nazwa<<" to "<<M[id_next_miasta]->nazwa<<" majace ID "<<id_next_miasta<<" odlegle o "<<najm<<endl;
+        cout<<"Najblizsze miasto dla "<<walker->nazwa<<" to "<<M[id_next_miasta]->nazwa<<" majace ID "<<id_next_miasta<<" odlegle o "<<walker->dystans<<endl;//dystans do zmiany
 
         if(!M[id_next_miasta]->odwiedzony)
         {
@@ -201,25 +310,4 @@ void Djikstra(int start,int finish,int droga[])
         cout<<"\nGdzieś mnie wywiało...";
     }
 }
-
-int main()
-{
-    string start;
-    string finish;
-    int droga[2284];
-
-    int num = 2283;
-    WypelnianieMiast();
-    cout << M[num]->nazwa << "      " << M[num]->x << "      " << M[num]->y << endl;
-    WypelnianieKrawedzi();
-    /*cout << "Sasiedzi:" << endl;
-    edge* temp = M[num]->sasiedzi;
-    while (temp)
-    {
-        cout << M[temp->to]->nazwa << ", ";  temp = temp->next;
-    }*/
-    cout << "\n";
-    Podaj_S_i_F(start,finish);
-    Djikstra(start_id,finish_id,droga);
-    //cout<<droga[0];
-}
+*/
