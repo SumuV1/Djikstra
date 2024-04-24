@@ -191,9 +191,9 @@ void Djikstra_v2(int start,int finish,int droga[])
                 //jaki jest najm dystans zsumowany do miast sąsiadujących przez aktualne miasto <---
                 //jakie jest ID tego miasta
 
-                najm_len_sasaiada=M[walker->sasiedzi->to]->dystans;
-                if(M[walker->sasiedzi->to]->dystans==najm_len_sasaiada)
+                if(M[walker->sasiedzi->to]->dystans < najm_len_sasaiada)
                 {
+                    najm_len_sasaiada=M[walker->sasiedzi->to]->dystans;
                     id_najm_len_sasiada=walker->sasiedzi->to;
                 }
                 //spr jakie jest id miasta do ktorego prowadzi najm dlugosc
@@ -215,7 +215,7 @@ void Djikstra_v2(int start,int finish,int droga[])
         if(M[id_najm_len_sasiada]->odwiedzony==false && M[id_najm_len_sasiada]->dystans==najm_len_sasaiada)
         {
             droga[++d]=walker->sasiedzi->to;
-            walker=M[walker->sasiedzi->to];
+            walker=M[id_najm_len_sasiada];
             cout<<"\nMiasto po iteracji: "<<walker->nazwa<<endl;
         }
     }
@@ -236,7 +236,8 @@ int main()
 
     //int num = 2037;//Warszawa
     //int num = 1294;//Opoczno
-    int num = 2258;//Zarnow
+    //int num = 2258;//Zarnow
+    int num = 1720;//Slawno (piotrkowskie)
     WypelnianieMiast();
     cout << M[num]->nazwa << "      " << M[num]->x << "      " << M[num]->y << endl;
     WypelnianieKrawedzi();
